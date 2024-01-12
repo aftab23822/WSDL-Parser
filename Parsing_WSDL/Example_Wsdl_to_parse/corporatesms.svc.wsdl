@@ -1,0 +1,247 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://tempuri.org/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" name="Service1" targetNamespace="http://tempuri.org/">
+<wsp:Policy wsu:Id="BasicHttpBinding_ICorporateCBS1_policy">
+<wsp:ExactlyOne>
+<wsp:All>
+<sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+<wsp:Policy>
+<sp:TransportToken>
+<wsp:Policy>
+<sp:HttpsToken RequireClientCertificate="false"/>
+</wsp:Policy>
+</sp:TransportToken>
+<sp:AlgorithmSuite>
+<wsp:Policy>
+<sp:Basic256/>
+</wsp:Policy>
+</sp:AlgorithmSuite>
+<sp:Layout>
+<wsp:Policy>
+<sp:Strict/>
+</wsp:Policy>
+</sp:Layout>
+</wsp:Policy>
+</sp:TransportBinding>
+</wsp:All>
+</wsp:ExactlyOne>
+</wsp:Policy>
+<wsdl:types>
+<xsd:schema targetNamespace="http://tempuri.org/Imports">
+<xsd:import schemaLocation="http://cbs.zong.com.pk/ReachCWSv2/CorporateSMS.svc?xsd=xsd0" namespace="http://tempuri.org/"/>
+<xsd:import schemaLocation="http://cbs.zong.com.pk/ReachCWSv2/CorporateSMS.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+<xsd:import schemaLocation="http://cbs.zong.com.pk/ReachCWSv2/CorporateSMS.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/CBSCustomerAPI"/>
+</xsd:schema>
+</wsdl:types>
+<wsdl:message name="ICorporateCBS_GetReports_InputMessage">
+<wsdl:part name="parameters" element="tns:GetReports"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetReports_OutputMessage">
+<wsdl:part name="parameters" element="tns:GetReportsResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetCampaigns_InputMessage">
+<wsdl:part name="parameters" element="tns:GetCampaigns"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetCampaigns_OutputMessage">
+<wsdl:part name="parameters" element="tns:GetCampaignsResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_QuickSMS_InputMessage">
+<wsdl:part name="parameters" element="tns:QuickSMS"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_QuickSMS_OutputMessage">
+<wsdl:part name="parameters" element="tns:QuickSMSResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetAccountSummary_InputMessage">
+<wsdl:part name="parameters" element="tns:GetAccountSummary"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetAccountSummary_OutputMessage">
+<wsdl:part name="parameters" element="tns:GetAccountSummaryResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_BulkSMS_InputMessage">
+<wsdl:part name="parameters" element="tns:BulkSMS"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_BulkSMS_OutputMessage">
+<wsdl:part name="parameters" element="tns:BulkSMSResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_DynamicSMS_InputMessage">
+<wsdl:part name="parameters" element="tns:DynamicSMS"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_DynamicSMS_OutputMessage">
+<wsdl:part name="parameters" element="tns:DynamicSMSResponse"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetInbox_InputMessage">
+<wsdl:part name="parameters" element="tns:GetInbox"/>
+</wsdl:message>
+<wsdl:message name="ICorporateCBS_GetInbox_OutputMessage">
+<wsdl:part name="parameters" element="tns:GetInboxResponse"/>
+</wsdl:message>
+<wsdl:portType name="ICorporateCBS">
+<wsdl:operation name="GetReports">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/GetReports" message="tns:ICorporateCBS_GetReports_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/GetReportsResponse" message="tns:ICorporateCBS_GetReports_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="GetCampaigns">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/GetCampaigns" message="tns:ICorporateCBS_GetCampaigns_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/GetCampaignsResponse" message="tns:ICorporateCBS_GetCampaigns_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="QuickSMS">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/QuickSMS" message="tns:ICorporateCBS_QuickSMS_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/QuickSMSResponse" message="tns:ICorporateCBS_QuickSMS_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="GetAccountSummary">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/GetAccountSummary" message="tns:ICorporateCBS_GetAccountSummary_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/GetAccountSummaryResponse" message="tns:ICorporateCBS_GetAccountSummary_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="BulkSMS">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/BulkSMS" message="tns:ICorporateCBS_BulkSMS_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/BulkSMSResponse" message="tns:ICorporateCBS_BulkSMS_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="DynamicSMS">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/DynamicSMS" message="tns:ICorporateCBS_DynamicSMS_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/DynamicSMSResponse" message="tns:ICorporateCBS_DynamicSMS_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="GetInbox">
+<wsdl:input wsaw:Action="http://tempuri.org/ICorporateCBS/GetInbox" message="tns:ICorporateCBS_GetInbox_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICorporateCBS/GetInboxResponse" message="tns:ICorporateCBS_GetInbox_OutputMessage"/>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="BasicHttpBinding_ICorporateCBS" type="tns:ICorporateCBS">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="GetReports">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetReports" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetCampaigns">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetCampaigns" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="QuickSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/QuickSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetAccountSummary">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetAccountSummary" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="BulkSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/BulkSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="DynamicSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/DynamicSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetInbox">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetInbox" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="BasicHttpBinding_ICorporateCBS1" type="tns:ICorporateCBS">
+<wsp:PolicyReference URI="#BasicHttpBinding_ICorporateCBS1_policy"/>
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="GetReports">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetReports" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetCampaigns">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetCampaigns" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="QuickSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/QuickSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetAccountSummary">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetAccountSummary" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="BulkSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/BulkSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="DynamicSMS">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/DynamicSMS" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetInbox">
+<soap:operation soapAction="http://tempuri.org/ICorporateCBS/GetInbox" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="Service1">
+<wsdl:port name="BasicHttpBinding_ICorporateCBS" binding="tns:BasicHttpBinding_ICorporateCBS">
+<soap:address location="http://cbs.zong.com.pk/ReachCWSv2/CorporateSMS.svc"/>
+</wsdl:port>
+<wsdl:port name="BasicHttpBinding_ICorporateCBS1" binding="tns:BasicHttpBinding_ICorporateCBS1">
+<soap:address location="https://cbs.zong.com.pk/ReachCWSv2/CorporateSMS.svc"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
