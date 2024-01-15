@@ -48,7 +48,7 @@ namespace Parsing_WSDL.WSDLParser
 
         private void HandleInputBody(OperationWSDL operationWsdl, MessagePart messagePart)
         {
-            operationWsdl.input = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
+            operationWsdl.input = new WsdlBodyGenerator().GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
             if (!string.IsNullOrEmpty(operationWsdl.input)) return;
             var type = GetMessagePartType(messagePart.Element.Name);
             operationWsdl.input = "<" + type + ">" + messagePart.Element.Name + "<" + type + ">";
@@ -91,7 +91,7 @@ namespace Parsing_WSDL.WSDLParser
 
         private void HandleOutputBody(OperationWSDL operationWsdl, MessagePart messagePart)
         {
-            operationWsdl.output = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
+            operationWsdl.output = new WsdlBodyGenerator().GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
             if (!string.IsNullOrEmpty(operationWsdl.output)) return;
             var type = GetMessagePartType(messagePart.Element.Name);
             operationWsdl.output = "<" + type + ">" + messagePart.Element.Name + "<" + type + ">";

@@ -35,7 +35,7 @@ internal class WsdlParameterGenerator
                     {
                         xmlWriter.WriteStartElement("", message.Name, "");
 
-                        var xml = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(xmlSchemas, part.Type.Name);
+                        var xml = new WsdlBodyGenerator().GenerateXmlFromWSDLSchema(xmlSchemas, part.Type.Name);
                         XmlDocument generatedXmlDoc = new XmlDocument();
                         generatedXmlDoc.LoadXml(xml);
 
