@@ -14,8 +14,7 @@ public class WsdlBodyGenerator
         XmlWriterSettings settings = new XmlWriterSettings
         {
             Indent = true,
-            OmitXmlDeclaration = false,
-            Encoding = Encoding.UTF8
+            OmitXmlDeclaration = false
         };
 
         using (XmlWriter writer = XmlWriter.Create(xmlBuilder, settings))
@@ -28,12 +27,18 @@ public class WsdlBodyGenerator
                 foreach (XmlSchema xmlSchema in _XmlSchemas)
                 {
                     var schemaItems = xmlSchema.Items;
-                    foreach (XmlSchemaElement element in schemaItems.OfType<XmlSchemaElement>())
+                    foreach (XmlSchemaObject schemaobj in schemaItems.OfType<XmlSchemaObject>())
                     {
-                        if (element.Name == elementName)
+                        if (schemaobj is XmlSchemaElement element && element.Name == elementName)
                         {
                             found = true;
                             WriteElementOrType(writer, element, schemaItems, namespaceUri, visitedTypes);
+                            break;
+                        }
+                        if(schemaobj is XmlSchemaComplexType complexType && complexType.Name == elementName)
+                        {
+                            found= true;
+                            WriteElementOrType(writer, complexType.Particle, schemaItems, namespaceUri, visitedTypes);
                             break;
                         }
                     }
@@ -90,7 +95,14 @@ public class WsdlBodyGenerator
 
     private static void WriteElement(XmlWriter writer, XmlSchemaElement element, XmlSchemaObjectCollection schemaItems, string namespaceUri, HashSet<XmlQualifiedName> visitedTypes)
     {
-        writer.WriteStartElement("tns", element.Name, namespaceUri);
+        if(namespaceUri!= null) 
+        { 
+            writer.WriteStartElement("tns", element.Name, namespaceUri);
+        }
+        else
+        {
+            writer.WriteStartElement(element.Name);
+        }
 
         if (element.SchemaType != null)
         {
@@ -107,7 +119,7 @@ public class WsdlBodyGenerator
         {
             if (element.DefaultValue != null || XmlSchemaHelper.IsSimpleType(element))
             {
-                writer.WriteValue(element.DefaultValue ?? element.SchemaTypeName.Name);
+                writer.WriteValue(element.DefaultValue ?? SampleGenerator.GetSampleValue(element.SchemaTypeName.Name));
             }
         }
         writer.WriteEndElement();

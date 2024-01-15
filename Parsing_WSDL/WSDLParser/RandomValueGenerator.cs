@@ -4,22 +4,32 @@ class SampleGenerator
 {
     private static Random random = new Random();
 
-    public static string GetSampleValue(string typeName)
+    public static string XGetSampleValue(string typeName)
     {
         switch (typeName.ToLower())
         {
             case "bool":
-                return (random.Next(2) == 0).ToString(); // Random boolean as string
+            case "boolean":
+                return (random.Next(2) == 0).ToString(); 
             case "string":
-                return "<string>";
+                return "string";
             case "decimal":
-                return (random.NextDouble() * 100).ToString(); // Random decimal between 0 and 100 as string
+                return Math.Round(random.NextDouble() * 100, 2).ToString(); 
             case "int":
-                return random.Next().ToString(); // Random integer as string
+                return random.Next().ToString(); 
             case "double":
-                return random.NextDouble().ToString(); // Random double between 0 and 1 as string
+                return Math.Round(random.NextDouble(), 2).ToString();
             default:
-                return "<string>";
+                return "string";
+        }
+    }
+
+    public static string GetSampleValue(string typeName)
+    {
+        switch (typeName.ToLower())
+        {
+            default:
+                return "string";
         }
     }
 

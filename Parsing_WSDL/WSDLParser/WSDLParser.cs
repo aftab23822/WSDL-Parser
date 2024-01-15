@@ -1,16 +1,10 @@
 using System.Data;
 using System.Web.Services.Description;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Parsing_WSDL.WSDLParser;
 
 public class WSDLParser
 {
     private ServiceDescriptionCollection _services = new();
-    private XmlSchemas _XmlSchemas { get; set; }
-
-    private bool _ParamArray;
-
     private List<WSDLServiceTypes> Parse(ServiceDescription serviceDescription)
     {
         _services.Add(serviceDescription);
@@ -73,158 +67,19 @@ public class WSDLParser
         operationWsdl.Description = operation?.Documentation.Trim();
         operationWsdl.name = operation?.Name;
         operationWsdl.actionUrl = GetActionUrl(portWsdl.address, operationbinding);
-        SetInputAndContentType(operationWsdl, operationbinding);
-        SetOutputAndContentType(operationWsdl, operationbinding);
-        SetInputOutputBody(operation, operationWsdl);
+        HandleIntputOutput(operationWsdl, operationbinding, operation);
         portWsdl.operations.Add(operationWsdl);
     }
 
-    private void SetInputOutputBody(Operation operation, OperationWSDL operationWsdl)
+    private void HandleIntputOutput(OperationWSDL operationWsdl, OperationBinding operationbinding, Operation? operation)
     {
-        _XmlSchemas = _services[0].Types.Schemas;
-        var messageinput = GetMessage(operation.Messages.Input);
-        var messageoutput = GetMessage(operation.Messages.Output);
+        var contentTypeHandler = new ContentTypeHandler();
+        contentTypeHandler.SetInputOutputContentType(operationWsdl, operationbinding);
 
-        SetOperationWsdlInput(operationWsdl, messageinput);
-        SetOperationWsdlOutput(operationWsdl, messageoutput);
-
+        var bodyHandler = new MessagePartHandler(_services);
+        bodyHandler.HanldeInputOutputBody(operation, operationWsdl);
     }
 
-    private void SetOperationWsdlOutput(OperationWSDL operationWsdl, Message messageoutput)
-    {
-        foreach (MessagePart messagePart in messageoutput.Parts)
-        {
-
-            if (string.IsNullOrEmpty(messagePart.Element.Name)) //parameter
-            {
-                if (XmlSchemaHelper.IsKnownSimpleType(messagePart.Type.Name))
-                    operationWsdl.OutputParameters.Add(new(messagePart.Name, messagePart.Type.Name, SampleGenerator.GetSampleValue(messagePart.Type.Name), operationWsdl.SendInputBodyAs));
-                 else
-                {
-
-                    //operationWsdl.input = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Type.Name, _services[0].TargetNamespace);
-                }
-            }
-            else
-            {
-                operationWsdl.output = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
-                if (!string.IsNullOrEmpty(operationWsdl.output)) return;
-                var type = GetMessagePartType(messagePart.Element.Name);
-                operationWsdl.output = "<" + type + ">" + messagePart.Element.Name + "<" + type + ">";
-            }
-        }
-    }
-
-    private void SetOperationWsdlInput(OperationWSDL operationWsdl, Message messageinput)
-    {
-        foreach (MessagePart messagePart in messageinput.Parts)
-        {
-            if (string.IsNullOrEmpty(messagePart.Element.Name)) //parameter
-            {
-                if (XmlSchemaHelper.IsKnownSimpleType(messagePart.Type.Name))
-                    operationWsdl.InputParameters.Add(new(messagePart.Name, messagePart.Type.Name, SampleGenerator.GetSampleValue(messagePart.Type.Name), operationWsdl.SendInputBodyAs));
-                else
-                {
-
-                    //operationWsdl.input = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Type.Name, _services[0].TargetNamespace);
-                }               //operationWsdl.input = messageinput?.Parts[0].Name + "=" + messageinput?.Parts[0].Type.Name;
-            }
-            else
-            {
-                operationWsdl.input = WsdlBodyGenerator.GenerateXmlFromWSDLSchema(_XmlSchemas, messagePart.Element.Name, _services[0].TargetNamespace);
-                if (!string.IsNullOrEmpty(operationWsdl.input)) return;
-                var type = GetMessagePartType(messagePart.Element.Name);
-                operationWsdl.input = "<" + type + ">" + messagePart.Element.Name + "<" + type + ">";
-            }
-        }
-    }
-
-    private Message GetMessage(OperationMessage operationMsg)
-    {
-        var messages = _services[0].Messages;
-        return operationMsg != null ? messages[operationMsg.Message.Name] : null;
-    }
-
-    private void SetInputAndContentType(OperationWSDL ow, OperationBinding operationbinding)
-    {
-        if (operationbinding.Input is null)
-        {
-            ow.SendInputBodyAs = OperationBody.None;
-            return;
-        }
-
-        ow.InputContentType = CoreConstants.XmlContentType;
-        SetInput(ow, operationbinding.Input);
-    }
-
-    private void SetInput(OperationWSDL ow, InputBinding inputBinding)
-    {
-        if (inputBinding.Extensions.Find(typeof(SoapBodyBinding)) is SoapBodyBinding soap)
-        {
-            ow.BodeRequired = soap.Required;
-            ow.BodyEncoding = soap.Encoding;
-            ow.BodyNamespace = soap.Namespace;
-            ow.BodyUse = soap.Use;
-            ow.SendInputBodyAs = OperationBody.XmlBody;
-        }
-        else if (inputBinding.Extensions.Find(typeof(SoapHeaderBinding)) != null)
-        {
-            ow.SendInputBodyAs = OperationBody.HeaderParameter;
-        }
-        else if (inputBinding.Extensions.Find(typeof(MimeContentBinding)) is MimeContentBinding mimeContentBinding)
-        {
-            ow.InputContentType = mimeContentBinding.Type;
-            ow.SendInputBodyAs = OperationBody.XmlBody;
-        }
-        else
-        {
-            if (ow.HttpVerb?.ToLower() == "get")
-                ow.SendInputBodyAs = OperationBody.QueryParameter;
-            else
-                ow.SendInputBodyAs = OperationBody.UrlEncodedParametersBody;
-        }
-    }
-
-
-    private void SetOutputAndContentType(OperationWSDL ow, OperationBinding operationbinding)
-    {
-        if (operationbinding.Output is null)
-        {
-            ow.ResponseOutputAs = OperationBody.None;
-            return;
-        }
-
-        SetOutput(ow, operationbinding.Output);
-    }
-
-    private void SetOutput(OperationWSDL ow, OutputBinding outputBinding)
-    {
-        ow.OutputContentType = CoreConstants.XmlContentType;
-        ow.ResponseOutputAs = OperationBody.XmlBody;
-        if (outputBinding.Extensions.Find(typeof(SoapBodyBinding)) != null)
-            ow.ResponseOutputAs = OperationBody.XmlBody;
-        else
-            SetMimeContentBinding(outputBinding, ow);
-    }
-
-    private void SetMimeContentBinding(OutputBinding outputBinding, OperationWSDL ow)
-    {
-        if (outputBinding.Extensions.Find(typeof(MimeContentBinding)) is not MimeContentBinding mimeContentBinding)
-            return;
-        ow.OutputContentType = mimeContentBinding.Type;
-    }
-
-    private string GetMessagePartType(string elementName)
-    {
-        foreach (XmlSchema xmlSchema in _XmlSchemas)
-        {
-            var schemaItems = xmlSchema.Items;
-            var element = schemaItems.OfType<XmlSchemaElement>().FirstOrDefault(e => e.Name == elementName);
-            if (element == null) return null;
-            return string.IsNullOrEmpty(element.SchemaTypeName.Name) ? null : element.SchemaTypeName.Name;
-        }
-        return null;
-    }
 
     private string GetHttpVerbFromBinding(Binding binding)
     {
@@ -236,17 +91,22 @@ public class WSDLParser
 
     private string GetActionUrl(string baseUrl, OperationBinding operationbinding)
     {
-        var actionUrl = string.Empty;
+        var actionUrl = GetActionFromOperBinding(operationbinding);
+        actionUrl = !actionUrl.StartsWith(ApiConstants.Slash) && !string.IsNullOrEmpty(actionUrl) ? actionUrl : $"{baseUrl}{actionUrl}";
+        return actionUrl;
+    }
+
+    private string GetActionFromOperBinding(OperationBinding operationbinding)
+    {
         if (operationbinding.Extensions.Find(typeof(SoapOperationBinding)) is SoapOperationBinding soupOperation)
-            actionUrl = soupOperation.SoapAction;
+            return soupOperation.SoapAction;
 
         if (operationbinding.Binding.Extensions.Find(typeof(HttpBinding)) != null)
         {
             var httpBinding = operationbinding.Extensions.Find(typeof(HttpOperationBinding)) as HttpOperationBinding;
-            actionUrl = httpBinding.Location;
+            return httpBinding.Location;
         }
-        actionUrl = !actionUrl.StartsWith(CoreConstants.Slash) && !string.IsNullOrEmpty(actionUrl) ? actionUrl : $"{baseUrl}{actionUrl}";
-        return actionUrl;
+        return string.Empty;
     }
 
     private string GetAddress(Port port)

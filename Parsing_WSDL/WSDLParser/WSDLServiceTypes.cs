@@ -19,12 +19,13 @@ public enum RestParameterLocationType
 
 public class Parameter
 {
-    public Parameter(string name, string type, string defaultValue, OperationBody operationInputBodyType)
+    public Parameter(string name, string type, string defaultValue, OperationBody operationInputBodyType, bool isXml = false)
     {
         this.Name = name;
         this.Type = type;
         DefaultValue = defaultValue;
         LocationType = GetRestParameterLocationType(operationInputBodyType);
+        this.IsXml = isXml;
     }
 
     private RestParameterLocationType GetRestParameterLocationType(OperationBody operationInputBodyType)
@@ -46,6 +47,7 @@ public class Parameter
     public string Type { get; set; }
     public string DefaultValue { get; set; }
     public RestParameterLocationType LocationType { get; set; }
+    public bool IsXml { get; set; } = false;
 }
 
 
